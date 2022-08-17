@@ -1,0 +1,1271 @@
+\documentclass{report}
+\usepackage[utf8]{inputenc}
+\usepackage{appendix}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subfig}
+\restylefloat{table}
+\usepackage{biblatex}
+\addbibresource{Ref.bib}
+\usepackage{placeins}
+
+
+\usepackage[acronym,nomain,nonumberlist]{glossaries}
+\makeglossaries
+
+
+
+
+
+
+\usepackage[bottom=35mm,left=25mm,right=25mm]{geometry}
+\usepackage{epigraph}
+
+%Anpassungen für das Abkürzungsverzeichnis
+\newglossarystyle{dottedlocations}{%
+	\renewcommand*{\glossaryentryfield}[5]{%
+		\item[\glsentryitem{##1}\glstarget{##1}{##2}] \emph{##3}%
+		\unskip\leaders\hbox to 2.9mm{\hss.}\hfill##5}%
+	\renewcommand*{\glsgroupskip}{}%
+}
+
+
+%Anpassung von Kopf- und Fußzeile
+%beeinflusst die erste Seite des Kapitels
+\usepackage[automark,headsepline]{scrlayer-scrpage}
+%\input{resources/styles/header_footer}
+\setlength{\parindent}{0em}
+
+%Zeilenabstand 1,5
+\usepackage[onehalfspacing]{setspace}
+
+%Verbesserte Darstellung der Buchstaben zueinander
+\usepackage[stretch=10]{microtype}
+
+%Deutsche Bezeichnungen für angezeigte Namen (z.B. Inhaltsverzeichnis etc.)
+\usepackage[nenglish]{babel}
+
+\usepackage{lmodern}
+\usepackage[utf8]{luainputenc}
+\usepackage[T1]{fontenc}
+\usepackage[nenglish]{babel}
+\setlength{\emergencystretch}{1em}
+
+%Einfachere Zitate
+\usepackage{epigraph}
+
+%Unterstützung der H Positionierung (keine automatische Verschiebung eingefügter Elemente)
+\usepackage{float}
+
+%Erlaubt Umbrüche innerhalb von Tabellen
+\usepackage{tabularx}
+
+%Erlaubt Seitenumbrüche innerhalb von Tabellen
+\usepackage{longtable}
+
+%Erlaubt die Darstellung von Sourcecode mit Highlighting
+\usepackage{listings}
+
+%Definition eigener Farben bei Nutzung eines selbst vergebene Namens
+\usepackage[table,xcdraw]{xcolor}
+
+%Vektorgrafiken
+\usepackage{tikz}
+
+%Grafiken (wie jpg, png, etc.)
+\usepackage{graphicx}
+
+%Grafiken von Text umlaufen lassen
+\usepackage{wrapfig}
+
+%Ermöglicht Verknüpfungen innerhalb des Dokumentes (e.g. for PDF), Links werden durch "hidelink" nicht explizit hervorgehoben
+\usepackage[hidelinks,english]{hyperref}
+
+\setlength{\headheight}{18pt}
+
+%Zusätzliche Farben
+\definecolor{darkgreen}{RGB}{0,100,0}
+\setlength{\emergencystretch}{15pt}
+
+%Umbenennungen
+\renewcommand{\lstlistlistingname}{Quelltextverzeichnis}
+
+\renewcommand{\lstlistingname}{Codeauszug}
+\lstset{
+	language=Java,
+	numbers=left,
+	columns=fullflexible,
+	aboveskip=5pt,
+	belowskip=10pt,
+	basicstyle=\small\ttfamily,
+	backgroundcolor=\color{black!5},
+	commentstyle=\color{darkgreen},
+	keywordstyle=\color{blue},
+	stringstyle=\color{gray},
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	xleftmargin=16pt,
+	xrightmargin=0pt,
+	framesep=5pt,
+	framerule=3pt,
+	frame=leftline,
+	rulecolor=\color{green},
+	tabsize=2,
+	breaklines=true,
+	breakatwhitespace=true,
+	prebreak={\mbox{$\hookleftarrow$}}
+}
+
+
+ \title{A Low Power Low Dropout Regulator for an Energy Management Unit}
+ 
+ 
+\author{{M K Akif Alvi Arnab} \\
+{\and} \\
+{\textit{Examiners:}} \\{\and} \\
+{Prof. Dr.-Ing. Matthias Kuhl} {\and} \\ {Prof. Dr.-Ing. Wolfgang Krautschneider} \\
+{\and} \\{\and}\\
+{\textit{Supervisor:}} 
+{M.Sc Christian Adam} \\[2cm]{\and} \\{\and}\\ {July 04, 2022}{\and} \\{\and}\\ {\and}\\ {\and}\\ {\and}\\ {\and}\\ {\and}\\ {\and}\\ {\and}\\ {\and}\\ {\and}\\ {\and}\\ {\and}\\ {\and}\\
+\includegraphics[width=1\textwidth]{Images/logo.PNG}}
+
+\date{}
+
+ 
+
+
+
+
+
+
+
+
+
+\begin{document}
+
+
+\maketitle
+
+\chapter* {Declaration of Authorship}
+I, M K Akif Alvi Arnab, born on March 1, 1994, hereby declare that I have authored and submitted the project work under the title “A Low Power Low Dropout Regulator for an Energy Management Unit” on my own. This work was not previously presented to another examination board and has not been published. Only declared sources and auxiliaries were used.
+
+\hfill \break
+
+
+Hamburg, July 04, 2022.
+\hfill \break
+
+................. \break
+signature
+                                                                                                                            
+ 
+\newacronym{ldo}{LDO}{low drop out}
+\newacronym{mosfet}{MOSFET}{metal-oxide-semiconductor field-effect transistor}
+\newacronym{nmos}{NMOS}{n-channel MOSFET}
+\newacronym{pmos}{PMOS}{p-channel MOSFET}
+\newacronym{cmos}{CMOS}{complementary metal-oxide-semiconductor}
+\newacronym{asic}{ASIC}{application-specific integrated circuit}
+\newacronym{Soc}{SoC}{system-on-chip}
+\newacronym{iic}{IIC}{institute for integrated circuits}
+\newacronym{ldr}{LDR}{load regulation}
+\newacronym{lnr}{LNR}{line regulation}
+\newacronym{dc}{DC}{direct current}
+\newacronym{ac}{AC}{alternating current}
+\newacronym{psrr}{PSRR}{power supply rejection ratio}
+\newacronym{opamp}{OPAMP}{operational amplifier}
+\newacronym{ota}{OTA}{operational transconductance amplifier}                                                                                                                           
+  
+
+                                                                     
+                     
+
+\tableofcontents
+\listoffigures
+\listoftables
+\glsaddall
+\printglossary[type=\acronymtype,title=Acronyms]
+   
+
+\include{Introduction}
+\include{Types of LDO Regulator}
+\include{Stability and Frequency Compensation}
+\include{LDO Regulator Components Design}
+\include{LDO Regulator Simulation Results}
+
+
+
+\include{Conclusion}
+
+
+ \printbibliography
+
+
+
+
+\appendix
+\include{Appendix}
+
+
+
+
+\end{document}
+
+\chapter{Introduction}
+
+Power management in electronic circuits is a very important aspect nowadays with ever-decreasing size of electronic devices but the battery efficiency being almost at the same level. The purpose of power management is to reduce
+power consumption and increase battery life. Modern technologies are pushing towards a complete system-on-chip (SoC) design that requires power management. A SoC requires many building blocks that have different supply requirements. This is where a voltage regulator, DC-DC converter, Switching Regulator, or their combinations are utilized. This master project is on building a low power low dropout regulator (LDO) for the energy management Unit of an Electronic Osteosynthesis implant developed by the Institute for Integrated Circuits at the TUHH. LDO regulators are one of the fundamental building blocks of power management Unit and are used in many battery-powered systems since it provides constant output voltage maintaining line regulation, load regulation, temperature variation, power supply rejection (PSR). The designed LDO regulator will supply a constant 1.8V regulated voltage to the components of the Energy Management Unit.
+
+Topics covered in the project work are:
+
+
+
+•	Defining the specifications of the LDO Regulator
+
+
+•	Selecting an architecture for the Regulator
+
+•	Selecting the right compensation approach
+
+•	Deriving specifications for the components of the LDO Regulator
+
+•	Simulation of the designed LDO regulator
+
+\section{Motivation}
+An Energy Management Unit of an electronic osteosynthesis implant is developed by M.Sc Christian Adam at the Institute for Integrated Circuits(IIC) at the TUHH. The implant is powered by a bank of 4 supercapacitors. Supercapacitors are used because they can be charged at a faster rate and has a longer lifetime ($10^6$ charging cycles) \cite{mendoza2018super}. Initially, the supercapacitors are in parallel connection and can not be discharged lower than 1.8 volts. The formula for energy stored in a capacitor 
+\begin{equation}
+    E = \frac{1}{2}  C. V^2
+\end{equation}
+
+The equation of the available energy is 
+\begin{equation}
+    E_{avail} = 2. C_{single} . (V_{max}^2 - V_{min}^2)
+\end{equation}
+
+Where $C_{single}$ is the capacitor value of a single capacitor 11mF and $V_{max}$ and $V_{min}$ are the maximum and minimum voltages for all the capacitors. The maximum voltage, in this case, is 3.3V as the selected model was CPH3225A. If it is assumed that the supercapacitors can be completely discharged to 0 volts, meaning $V_{min}$=0, the available energy results in 0.2396J. Discharging the capacitor from the maximum voltage to 1.8 V results in 0.1683 J of accessible energy and thereby $70.24\%$ of the total energy available. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=300pt]{Images/Available Energy Vs Min discharge voltage.PNG}
+    \caption{Available energy over minimum discharge voltage}
+    \label{fig1.1}
+\end{figure}
+
+
+The available energy vs minimum discharge voltage curve obtained from \cite{AutorderArbeit.} in Figure \ref{fig1.1} shows that the lower the discharging voltage of the supercapacitors, the higher the available energy is. The minimum discharge voltage was achieved by changing the topology from parallel to all supercapacitors in series with an intermediate connection as shown in Figure \ref{fig1.2} \cite{AutorderArbeit.}. With all supercapacitors in series, the minimum discharge voltage reduces to 0.45 volt and thus the available energy rises to 0.2351J which is 98.12$\%$ of the maximum available energy. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=400pt]{Images/topology.PNG}
+    \caption{Different topologies for supercapacitor connection}
+    \label{fig1.2}
+\end{figure}
+
+\section{The Energy Management Unit}
+The Energy Management Unit of the electronic osteosynthesis implant is shown in Figure \ref{fig1}. The energy is supplied through inductive energy transmission. A PMOS transmission gate is connected between the clamp cell and the switch matrix of the supercapacitor bank which is only conducting while the charging voltage is present and is avoiding leakage current of the inductive energy transmission. The available energy is maximized by changing the topology of the supercapacitors in the switch matrix from parallel to series. A Digital Control Unit controls the topology switch and the resulting output voltage is converted by the main LDO into a stable voltage of 1.8 and is sent to the main system. The output of the supercapacitor bank Vcap also goes to another low power LDO regulator which will be designed during this project work and will supply constant 1.8V voltage to the parts of the Energy Management Unit such as the voltage reference, the comparator, level shifter, clock, the counter and the digital control. The comparator compares the voltage of the supercapacitor bank through a voltage divider with the voltage reference and the output of the comparator is sent to the digital control unit. The comparator clock signal $Comp_{CLK}$  is generated from a timer and is sent to both the comparator and the digital control. The level shifter circuit is used to convert the digital signals at the low voltage level to the voltage level present at the PMOS transmission gate.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=400pt]{Images/EMU.PNG}
+    \caption{Energy management unit of the electronic osteosynthesis implant}
+    \label{fig1}
+\end{figure}
+
+\section{Specification of the LDO Regulator}
+The LDO regulator will be designed using X-fab 180nm XH018 technology as the main system is designed using the same technology. The input voltage is coming from the output voltage of the supercapacitor bank which is defined as a minimum of 2V to a maximum of 5V and the output of the regulator is 1.8V. The Dropout voltage thus is 200mV. The load current is calculated from the current consumption of all the blocks of the energy management unit which will be powered by the LDO regulator. The current is distinguished as the active stage and the inactive stage current of the energy management unit. During the inactive stage, only the digital control and the counter are active and consume a current of roughly 6.7$\mu A$ and for the active case, the current consumption was calculated as 25$\mu A$ \cite{AutorderArbeit.}.
+
+\hfill
+
+
+The specifications are assumptions about the final design. Based on these requirements, the design of the low-power Low Dropout Regulator is carried out. Table \ref{table 1.1} summarizes the LDO regulator initial specifications. 
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline
+      Parameter   & Value  \\\hline
+      $ V_{in}$  & 2-5V \\\hline
+      $ V_{out}$  & 1.8V\\\hline
+      $ V_{DO}$  & 200mV\\\hline
+      $ I_{load}(active)$  & 25$\mu $A\\\hline
+      $ I_{load}(inactive)$  & 6.7$\mu $A\\\hline 
+    \end{tabular}
+    \caption{LDO regulator specification}
+    \label{table 1.1}
+\end{table}
+
+
+
+\chapter{Types of Voltage Regulators}
+\label{ch2}
+There are two main types of voltage regulators: linear regulators and switching regulators. Both types regulate a system’s voltage, but linear regulators operate with relatively low efficiency, and switching regulators operate with higher efficiency. In high-efficiency switching regulators, most of the input power is transferred to the output without dissipation.
+
+\section{Linear Regulators}
+A linear voltage regulator utilizes an active pass device (such as a BJT or MOSFET), which is controlled by a high-gain operational amplifier. To maintain a constant output voltage, the linear regulator adjusts the pass device resistance by comparing the internal voltage reference to the sampled output voltage and then driving the error to zero. These regulators offer a few advantages: they are generally easy to design, dependable, cost-efficient, and offer low noise as well as a low output voltage ripple. Their simplicity and reliability make them intuitive and simple devices for engineers and are often highly cost-effective.
+
+\section{Switching Regulators}
+A switching regulator circuit is generally more complicated to design than a linear regulator and requires selecting external component values and careful layout design. Switching regulators can be step-down converters, step-up converters, or a combination of the two, which makes them more versatile than a linear regulator. Advantages of switching regulators include that they are highly efficient, have better thermal performance and can support higher current and wider $V_{IN}$ / $V_{OUT}$ applications. They can achieve greater than 95 percent efficiency depending on the application requirements. Unlike linear regulators, a switching power supply system may require additional external components, such as inductors, capacitors, FETs (field-effect transistors), or feedback resistors.
+
+\section{Low Dropout Regulator}
+The Project work is on building a Low Drop out regulator. It consists of a Pass element, a feedback network, an error amplifier, and a compensation network. The feedback network comprises of a resistive voltage divider, which delivers
+a scaled output voltage that is equal to the reference voltage when the output
+is at its nominal voltage. The Error Amplifier compares the reference voltage and the voltage from the feedback network. This difference is amplified and the output of the error amplifier drives the pass element to keep the output voltage level at a desired value. Figure \ref{fig2.1} \cite{Nasrollahpour.2017} shows a basic LDO regulator. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=350pt]{Images/Conventional LDO.PNG}
+    \caption{Basic low dropout regulator}
+    \label{fig2.1}
+\end{figure}
+
+A classical LDO has three operating regions according to Power Supply $V_{in}$\cite{.}.
+
+\paragraph{Regulation Region} The output voltage in this region is high enough for the LDO regulator to perform correctly, delivering stable output voltage and required current to the load.
+
+\paragraph{Dropout Region} When the input power is reduced to a level that the LDO regulator can no longer produce a stable output voltage, it enters the Dropout Region. The control loop loses gain and the LDO regulator cannot regulate further, as one or more transistors enter the triode region.
+
+\paragraph{Off Region} The voltage level of the power supply is too low to keep all the transistors ON and the circuit is cut-off. 
+
+Figure \ref{fig2.2} \cite{.Power} represents the LDO regulator operating regions.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=350pt]{Images/LDO Regions1.PNG}
+    \caption{LDO regulator operating regions}
+    \label{fig2.2}
+\end{figure}
+
+\subsection{Voltage Reference}
+
+The voltage reference is the starting point of all regulators, setting up the operating point of the error amplifier. In most cases, this voltage reference is of the band-gap type, because it provides the ability to work at low supply voltages. Moreover, its accuracy and stability under varying temperature is sufficient for the design of linear regulators. The design of a voltage reference is not a part of this project work. 
+
+\subsection{Error Amplifier}
+
+The Error Amplifier Design is supposed to be kept as simple as possible to keep the current consumption at a low level. The DC open-loop gain should be high under all load conditions to ensure the accuracy of the output. The bandwidth of the amplifier should be large enough to react fast upon changes in the load conditions and input voltages. The output voltage swing of the amplifier is also important because, at low load currents, the pass device needs to be turned off, which leads to the error amplifier output being driven close to one of the supply rails depending on the pass device type. The Error amplifier must satisfy the following requirements \cite{.}
+
+\paragraph{High open-loop gain ($A_{OL}) $} Load Regulation is enhanced as the open-loop gain of the system is increased.
+
+\paragraph{Low quiescent current ($I_{Q}) $} Quiescent current has to remain low to
+extend the battery life.
+
+\paragraph{Operation under low $V_{in} $ conditions} The amplifier must operate properly even if the input voltage supply is low as a consequence of battery discharge.
+
+\paragraph{High bandwidth (BW)} The bandwidth should be large enough to
+reach a fast time response to abrupt changes in load current.
+
+\paragraph{High power supply rejection (PSR)} A good PSR means that any fluctuation in input supply will not be reflected in the output.
+
+\paragraph{High output voltage swing} A high output voltage swing is required because the amplifier drives the pass device to control the current flow that the load demands. The operational amplifier senses the error of the feedback network and sets the adequate voltage value at the gate of the pass transistor so that it provides the required current to the load.
+
+
+
+
+\subsection{Pass Device}
+The Pass device is used for transferring large currents from the input to the load and is driven by the error amplifier in a feedback loop. Generally, a MOSFET is used as a pass device. NMOS pass element has the advantage of source follower configuration, so the output node is at the source of the transistor, which translates to lower output resistance, which may improve stability, but it depends on the size of the output capacitor \cite{cermak2016design}. However, an additional step-up voltage converter for error amplifier biasing is required in this configuration to generate sufficient high voltage at the transistor's gate as shown in Figure \ref{fig2.3} \cite{cermak2016design}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=400pt]{Images/LDO with NMOS pass.PNG}
+    \caption{ LDO with NMOS Pass Device \cite{cermak2016design}.}
+    \label{fig2.3}
+\end{figure}
+
+
+
+
+On the contrary, for the PMOS Pass device, which is typically used in LDO regulators, the error amplifier can be directly biased by the input voltage. One disadvantage, in this case, would be the lower efficiency due to the lower hole mobility or the increased device-width which yields a larger area on silicon. Also, the Miller effect could play a vital role which might lead to an unstable error amplifier. 
+
+\subsection{Feedback Network}
+The Feedback Network forms a control loop between the Error amplifier and the Pass transistor. It counteracts the effects of the load and also biases the pass transistor. The output voltage is scaled down to compare against the voltage reference of the error amplifier. As the reference voltage is fixed, the only way to change the output voltage is by changing the configuration of the feedback network. A resistive voltage divider could be used as the feedback network. The current flowing through the divider contributes to the quiescent current of the voltage regulator, so for low consumption, it is necessary to properly scale the value of the resistors so it correlates with the load current and with the current consumption of the error amplifier. The overall quiescent current of the LDO has to be as low as possible, and the resistances have to be in MΩ to reduce it. This leads to a trade-off between area consumption and parasitic capacitance of the resistors, which may have an impact on the stability of the system and the quiescent current of the LDO voltage regulator. A diode-connected PMOS voltage divider as shown in Figure \ref{fig2.4} \cite{cermak2016design} could be a good alternative as it reduces the area of the divider. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=100pt]{Images/Mosfet divider.PNG}
+    \caption{MOSFET voltage divider}
+    \label{fig2.4}
+\end{figure}
+
+\subsection{LDO Regulator Performance Parameters}
+The most important aspects to take into account in designing a regulator are DC and AC regulating performances, power consumption, and operational requirements. The regulating performance includes load regulation, line regulation, power supply rejection, dropout voltage and efficiency.
+
+	\paragraph{Load Regulation} Load regulation is a parameter defining the ability of the regulator to maintain the desired output voltage with varying load current. It can be defined as
+
+                            \begin{equation}LDR = \frac{ \Delta V_{out}}{\Delta I_{load}}\end{equation}
+
+where $\Delta V_{out}$ is the DC change in the output due to a change in the load current $I_{load}$. A widely variable load would cause considerable voltage swings at the LDO regulator internal nodes, and these changes would be reflected at the output node. This parameter is highly dependent on the LDO regulator open-loop gain, the equivalent resistance at the output node, and the input-offset voltages. Usually, the LDO open-loop gain must be increased and the output resistance decreased to improve the load regulation.
+
+\paragraph{Line Regulation} Line regulation is defined by the change in the output voltage caused by a change in the input voltage at a fixed load current. Line regulation can be described by the following equation
+
+                    \begin{equation} LNR= \frac{ \Delta V_{out}}{\Delta V_{in}} \end{equation} 
+
+Power supply variations ( $\Delta V_{in}$ ) can be produced in two ways: directly and indirectly. The first one considers variations through the supply itself, which can be a noisy power source or the output of another regulator. The indirect way is through changes in the voltage reference ($V_{ref}$ ). The closed-loop gain of the regulator is expressed by the following equation. It can be noticed that any variation in $V_{ref}$ will be amplified and reflected in the output.
+ 
+                  \begin{equation} A_{CL}= \frac{V_{out}}{V_{ref}}  = \frac{R_{FB2}}{R_{FB1}} +1 \end{equation}
+
+
+	\paragraph{Power Supply Rejection} Power supply rejection(PSR) is known as the regulator’s ability in preventing fluctuation of regulated output voltage caused by input voltage variation. PSR is an AC parameter and can be expressed as 
+                                   \begin{equation}PSR=  \frac{V_{out}}{V_{in}}\end{equation}
+	\paragraph{Dropout Voltage} Dropout voltage $V_{DO}$ is as discussed earlier defines as the voltage at which the circuit ceases to regulate against further reductions in input voltage. It can also be expressed as the difference between the minimum input supply voltage and the output voltage $(V_{DO} =V_{in, min}-V_{out})$. Dropout voltage is often the limiting factor in the efficient performance of LDO regulators.
+
+	\paragraph{Efficiency} Efficiency is defined by the fraction of source energy that reaches the load. It is given by 
+
+                               \begin{equation}\eta=  \frac{E_{load}}{E_{source}} \end{equation}
+The energy is defined as how much power P is transferred over intervals of time t. If the power is kept constant through time, the efficiency can be expressed as
+                    \begin{equation}\eta=  \frac{E_{load}}{E_{source}}   =  \frac{P_{load.t}}{P_{source.t}}  =  \frac{I_{load}  V_{out} }{I_{in}  V_{in} } \end{equation}
+
+Where $E_{load}$ is the energy required by the load, $E_{source}$ is the energy provided by the source, $P_{load}$ is the power consumption of the load, $P_{source}$ is the power supplied by the source, $I_{load}$ is the load current, $V_{in}$ is the input voltage, and $I_{in}$ is the input current. $I_{in}$ includes $I_{load}$ and quiescent current $I_{Q}$. The current efficiency can be defined as
+                                     \begin{equation}\eta_{I}=  \frac{I_{load}}{I_{in}}  =\frac{I_{load}}{I_{load}+I_{Q}}\end{equation}  
+Efficiency is one of the most important parameters in the world of portable electronics as it determines the operational life of the battery-powered devices. Using the above 2 equations, the expression of efficiency can be obtained as
+                                    \begin{equation}\eta=  \frac{V_{out} I_{load}}{V_{in} (I_{load}+I_{Q})}  =\frac{V_{out}}{V_{in}}    \eta_I \end{equation}   
+If the quiescent current $I_{Q}$ is low, the operational life of the battery and the voltage regulator efficiency will be maximized. Remembering that $V_{DO} $ = $V_{in}$ – $V_{out}$   
+
+                                   \begin{equation}\eta=  \frac{V_{in}- V_{DO} }{V_{in}} * \eta_{I} = [1- \frac{V_{DO}}{V_{in}} ] \eta_{I} \end{equation} 
+
+
+
+\chapter{Stability and Frequency Compensation}
+\label{freq_comp}
+
+One of the most important aspects of an LDO regulator is its stability. Stability is achieved through a proper compensation approach which can be external or internal. In general, external compensation is achieved through using a high-valued output capacitor in the order of $ \mu F$. It has some drawbacks as the load capacitor creates an equivalent series resistor whose value changes with frequency. It can lead to a modified AC and transient response. Also, its implementation into very small or lightweight equipment aren't possible. For the internal compensation, Miller compensation is a commonly used approach \cite{razavi2005design} that provides AC stability and improved transient response. Also, it can be fully integrated into a system-on-chip (SoC). Other approaches can be found in the literature \cite{ahuja1983improved}.  In this project work, internal compensation will be used to achieve stability for the LDO regulator.
+
+\section{Feedback Loop}
+\label{feedback}
+
+Generally, operational amplifiers are designed to have a high open-loop gain. But they're commonly used in a negative feedback loop to trade-off gain for some desirable properties such as gain desensitization, non-linearity reduction, control of input and output impedance and bandwidth increase of the amplifier \cite{.}.
+
+\hfill
+
+Figure \ref{fig 3.1} \cite{cermak2016design} shows a basic feedback loop. The loop contains a sampling circuit that senses the output and a mixer, which mixes the input signal $S_i$ with the feedback signal $S_FB$. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=350pt]{Images/feddback loop.PNG}
+    \caption{ Block representation of a feedback loop } 
+    \label{fig 3.1}
+\end{figure}
+
+\hfill
+
+The feedback factor is represented by $ \beta_{FB}$ and $ A_{OL}$ is the forward open-loop gain from the mixer to the sampler. The loop gain $A_{LG}$ across the whole loop would be
+\begin{equation}
+    A_{LG}= A_{OL}\beta_{FB}
+\end{equation}
+
+The negative sign in the input mixer indicates the feedback loop is negative feedback. So, the gain across the loop is inverting. If $ A_{OL}$ or $\beta_{FB}$ becomes negative, the feedback becomes positive which may lead to instability, depending on the magnitude of $ A_{OL}$.
+
+\hfill
+
+The error signal $S_E$ is the difference between the input signal $S_i$ and the feedback signal $S_FB$. The regulation effect is obtained from $ A_{OL}$ itself, as the system stabilizes when $S_E$ is close to zero. 
+
+\begin{equation}
+    S_E=S_i-S_{FB}= S_i-S_EA_{OL}\beta_{FB}=S_i-S_EA_{LG}=\frac{S_i}{1+A{LG}}
+\end{equation}
+
+The above equation shows that $S_E$ is closer to zero with higher $A_{LG}$. Therefore, increasing the loop gain results in better accuracy.
+
+\begin{equation}
+    S_{FB} = S_EA_{OL}\beta_{FB}=S_EA_{LG}=(S_I-S_{FB})A_{LG}=\frac{S_IA_{LG}}{1+A_{LG}} \approx S_i
+\end{equation}
+
+The feedback factor $\beta_{FB}$ senses the output signal $S_o$ and translates it to be comparable with the input signal $S_i$.
+
+\begin{equation}
+    S_o= (S_i-S_{FB})A_{OL}=(S_i-S_o\beta_{FB})A_{OL}=\frac{S_iA_{OL}}{1+A_{OL}\beta_{FB}} \approx \frac{S_i}{\beta_{FB}}
+\end{equation}
+
+The closed-loop gain $A_{CL}$ can be defined as 
+\begin{equation}
+    A_{CL}=\frac{S_o}{S_i} = \frac{A_{OL}}{1+A_{OL}\beta_{FB}} \approx \frac{1}{\beta_{FB}}
+\end{equation}
+
+From the equations, it can be understood that the feedback factor defines how the output is scaled to the input at steady-state and the open-loop gain defines how fast the system is regulating itself to match the scaled output to the input. 
+
+\section{Uncompensated LDO Regulator}
+
+In this section, the LDO regulator behavior with a no compensation approach will be discussed. Figure \ref{fig 3.2} shows an LDO regulator without any compensation and the nodes at which the most important poles occur. We can see that there are 2 major poles, one at the output of the error amplifier, pole 1, and the other one at the output of the LDO regulator, pole 2. Pole 1 is defined by the error amplifier output and the gate capacitance of the pass device whereas pole 2 is defined by the PMOS pass device's drain capacitance and the load impedance.  
+
+ \hfill
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=250pt]{Images/LDO pole diagram.PNG}
+    \caption{ LDO regulator poles} 
+    \label{fig 3.2}
+\end{figure}
+
+An uncompensated LDO regulator frequency response is shown in Figure \ref{fig 3.3} \cite{.}. The main problem with this LDO regulator is the system becomes unstable in the occurrence of a change in load. It makes the output pole move towards the origin and as a result, causes a loss in phase and thus, the system leads towards instability. When the demanded LDO regulator output current decreases, the pole moves towards the origin. The phase margin gets reduced and the system leads to instability. If the output current increases, the output resistance of the pass transistor decrease, causing the pole to move away from the origin and also reducing the regulator's DC gain. Moreover, the transient response also experiences a very large undershoot which almost reaches zero voltage. A proper compensation approach is necessary to rectify the above issues and make the system stable. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=250pt]{Images/Uncompensated LDO freq res.PNG}
+    \caption{ Uncompensated LDO regulator frequency response} 
+    \label{fig 3.3}
+\end{figure}
+
+
+
+\section{Internal Compensation}
+
+The internally compensated LDO regulators, also known as capacitor-less LDOs, allow the LDO regulator to be fully integrated with other circuits in the same system on chip (SoC). This compensation scheme doesn't depend on a large output capacitor or on its equivalent series resistance and provides AC stability and improves the transient response. 
+
+\hfill
+
+From Figure \ref{fig 3.2}, we know the LDO regulator has 2 major poles. The approximate pole location can be expressed as 
+\begin{equation}
+    f_{p,out} = \frac{1}{2\pi r_{eq} C_{Load}}
+\end{equation}
+
+\begin{equation}
+    f_{p,EA} = \frac{1}{2\pi r_{out,EA} C_{PT}}
+\end{equation}
+
+where $r_{eq}$ is the equivalent resistance formed by the parallel connection of the pass transistor output resistance, the feedback resistance, and the load resistance, $C_{Load}$ is the load capacitance, $r_{out,EA}$ is the error amplifier output resistance, $C_{PT}$ is the total equivalent capacitance at the pass transistor gate. In an uncompensated LDO regulator, the pole at the output of the error amplifier and the pole at the output of the LDO regulator are both at low frequencies, which causes the system to be unstable. In internal compensation, because the output capacitor is very low, the presence of a miller capacitor forces the error amplifier pole to be the dominant one. So theoretically, stability would be achieved if the output pole is placed far away from the error amplifier pole.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=350pt]{Images/Miller Compensated LDO.PNG}
+    \caption{ Internally compensated LDO Regulator} 
+    \label{fig3.4}
+\end{figure}
+
+Figure \ref{fig3.4} shows an internally compensated LDO regulator with a miller capacitor Cc. The miller capacitor determines the dominant pole. A high-valued miller capacitor takes the error amplifier pole to lower frequencies, making it the dominant one. The small-signal equivalent circuit of the miller compensated LDO regulator is shown in Figure \ref{fig3.5}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=400pt]{Images/small signal eq circuit.PNG}
+    \caption{Small-signal equivalent circuit of miller compensated LDO regulator} 
+    \label{fig3.5}
+\end{figure}
+
+The location of the dominant pole ($P_d$) and the first non-dominant pole ($P_{nd}$) are given by the following equations
+
+\begin{equation}
+    P_d = - \frac{1}{r_{out,EA}C_{EA}+(C_c+C_{Load})r_{eq}+gm_{PT}r_{out,EA}r_{eq}C_c}
+\end{equation}
+
+\begin{equation}
+    P_{nd} = - \frac{gm_{PT}C_c}{(C_{Load}+C_c)C_{EA}}
+\end{equation}
+
+
+
+where $gm_{PT}$ is the pass transistor transconductance, $r_{out,EA}$ and $C_{EA}$ are the equivalent output resistance and capacitance at the output node of the error amplifier,  $C_c$ is the compensation capacitor, $r_{eq}$ is the equivalent resistance at the output node and $C_{Load}$ is the load capacitance. From the equations, we can see that having a higher value for the compensation capacitor moves the non-dominant pole to higher frequencies, thus making the error amplifier output pole the dominant one. 
+
+\hfill
+
+However, a zero is also created due to the presence of the miller capacitor. To achieve stability, the zero has to be moved far away to the right half side of the s-plane or placed at the same frequency as the first non-dominant pole, so they both cancel each other. A zero nulling resistor is a good option in this regard. The location of the zero with a zero nulling resistor $R_z$ is given by:
+
+\begin{equation}
+\label{eq3.10}
+    z= \frac{1}{ (  \frac{1}{gm_{PT}}  -R_z)C_c     }
+\end{equation}
+
+
+$R_z$ nullifies the effect of the zero created by the miller capacitor and a higher value of it moves the zero further into the right half side of the s-plane, making the system more stable. If $R_z$ is increased further as $R_z > 1/gm_{PT}$, the zero can be moved towards the left half side of the s-plane and can cancel out the non-dominant pole, making the system more stable. Thus, stability is achieved for the voltage regulator. Figure \ref{fig3.6} shows the internally compensated LDO regulator with a miller capacitor and a zero nulling resistor. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=300pt]{Images/Internally comp LDO with Rz.PNG}
+    \caption{ Internally compensated LDO regulator with a zero nulling resistor} 
+    \label{fig3.6}
+\end{figure}
+
+\chapter{LDO Regulator Components Design}
+
+In this chapter, the value of the LDO regulator components will be defined. All the sections represent the design procedure of different blocks. The whole design is implemented on X-fab 180nm XH018 technology. The NMOS and PMOS transistors used are 6V NMA, PMA, and 1.98V NE, PE. 
+
+\section{Process Parameters}
+
+The effective mobility of the transistors was calculated through a DC simulation. The PMOS $\beta_{eff}$ was calculated using a PMA transistor and 2 DC voltage sources as shown in Figure \ref{figbetaP}. The gate voltage Vg was swept from 0 to 3.3V with a 1000 linear step size. The transistor Width(W) and Length(L) were both swept from $1\mu m$ to  $4\mu m$ with a step size of $500n m$.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=345pt]{Images/betaeff_P.PNG}
+    \caption{PMOS Circuit for $\beta_{eff,p}$}
+    \label{figbetaP}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=345pt]{Images/beff1.PNG}
+    \caption{Simulation result for $\beta_{eff,p}$ circuit}
+    \label{fig4.2}
+\end{figure}
+
+we know, 
+\begin{equation} \beta,effective = \mu_p C_{ox,p} \frac{W}{L} \end{equation}
+
+where $\beta$ is a process parameter, $\mu$ is charge-carrier effective mobility, $C_{ox}$ is the Capacitance of the gate oxide, and W and L are the channel width and length of the transistors respectively. 
+From the graph we can see if $L= 1.0\mu$m, $W= 3.0 \mu m$, then $\beta eff$ is 42.8939$ \mu A / V^{2} $ So we can find the $\mu_p C_{ox,p}$ as
+
+\begin{equation}
+    \mu_p C_{ox,p} = \frac{\beta,effective}{\frac{W}{L}} = \frac{42.8939\mu}{\frac{3}{1}} = 14.23\mu \frac{A}{V^2}
+\end{equation}
+
+If we take another value for example if $L= 2.0\mu$ m, $W= 3.0 \mu m$, then $\beta eff$ is 19.2915$ \mu A / V^{2} $ So we can find the $\mu_p C_{ox,p}$ as
+
+\begin{equation}
+    \mu_p C_{ox,p} = \frac{\beta,effective}{\frac{W}{L}} = \frac{19.2915\mu}{\frac{3}{2}} = 12.861\mu \frac{A}{V^2}
+\end{equation}
+
+or if $L= 2.0\mu$ m, $W= 2.2.0 \mu m$, then $\beta eff$ is 14.1323$ \mu A / V^{2} $ So we can find the $\mu_p C_{ox,p}$ as
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=345pt]{Images/L2.2.PNG}
+    \caption{$\beta_{eff,p}$ for W= 2.2$\mu $m and L = 2.0$\mu $m}
+    \label{fig4.3}
+\end{figure}
+
+\begin{equation}
+    \mu_p C_{ox,p} = \frac{\beta,effective}{\frac{W}{L}} = \frac{14.1323\mu}{\frac{2.2}{2}} = 12.85\mu \frac{A}{V^2}
+\end{equation}
+
+As the values are closer, the value of $\mu_p C_{ox,p}$ was chosen as 12.85 $\mu \frac{A}{V^2}$.
+
+\hfill
+
+
+Similarly, The NMOS $\beta_{eff}$ was  also calculated using an NMA transistor and 2 DC voltage sources as shown in Figure \ref{fig4.4}. The gate voltage Vg was swept from 0 to 3.3V with a 1000 linear step size. The transistor Width(W) and Length(L) were both swept from $1\mu m$ to  $4\mu m$ with a step size of $500n m$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=345pt]{Images/betanschematic.PNG}
+    \caption{NMOS Circuit for $\beta_{eff,n}$ }
+    \label{fig4.4}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=345pt]{Images/BetaNGraph.PNG}
+    \caption{Simulation result for $\beta_{eff,n}$ circuit }
+    \label{fig4.5}
+\end{figure}
+
+
+The $\mu_n C_{ox,n}$ was calculated in a similar process as $\mu_p C_{ox,p}$, and the value was chosen as 46.16 $\mu \frac{A}{V^2}$.
+
+\hfill
+
+For NE and PE transistors,the same process was followed and the $\mu_n C_{ox,n}$, and the $\mu_p C_{ox,p}$ for NE and PE transistors were chosen as 247.18 $\mu \frac{A}{V^2}$ and 28.69 $\mu \frac{A}{V^2}$ respectively.
+
+\hfill
+
+Another important process parameter is the Threshold voltage of the transistors. They were obtained from the X-FAB process and device specification document and are listed in the table below.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|}
+    \hline 
+      Parameter   & Low(V) & Typical(V) & High(V) & $\mu C_{ox}$($\mu \frac{A}{V^2}$)  \\\hline
+     PMA    & -1.05 & -1.2 & -1.35 & 12.85 \\\hline
+     NMA    & 1.13 & 1.23 & 1.33 & 46.16 \\\hline
+     PE    & -0.67 & -0.7 & -0.73 & 28.69  \\\hline
+     NE    & 0.5 & 0.53 & 0.56 & 247.18 \\\hline
+    \end{tabular}
+    \caption{Process Parameters for the transistors}
+    \label{table4.1}
+\end{table}
+
+
+
+
+\section{Pass Transistor} 
+
+PMOS pass transistor was chosen due to its comparatively low dropout voltage, as opposed to NMOS and bipolar implementations.The design was completed with $V_{DD}$ = 2V to 5V with $V_{min}$ = 2V, $I_{load}$ = 25µA, $V_{out}$ = 1.8V. With these parameters, the aspect ratio of the pass device can be figured out. $V_{SG}$ can be figured out by assuming a minimum value for the gate voltage of the pass device, which is the output voltage of the error amplifier. Let’s say it’s 300mV. And the worst-case voltage for the $V_{S}$ terminal should be considered to have the full load current flowing through it. In that case, it’s the minimum input voltage of 2 V. So $V_{SG}$ = $V_{IN,min}$ -$V_{G}$ = 2 V- 300mV= 1.7 V. The operating region for the transistor, in this case, is Linear as $V_{SD}$ =2V-1.8V = 0.2V is less than $V_{SG} - |V_{Th,p}|$ =1.7-1.2 =0.5V. We know from the square-Law equation of Mosfet operating in Linear Region,
+
+\begin{equation}
+  I_{D}= \mu_p C_{ox,p}  \frac{W}{L}  [( V_{SG}- |V_{Th,p}|)- \frac{V_{SD}}{2}] V_{SD} \end{equation}
+
+\begin{equation}
+    (W/L)_{pass}=  \frac{ I_{D}}{\mu_p C_{ox,p}[( V_{SG}- |V_{Th,p}|)- \frac{V_{SD}}{2}] V_{SD}}\end{equation}
+
+   \begin{equation}
+        (W/L)_{pass}=  \frac{ 25 \times 10^{-6}}{12.85 \times 10^{-6} \times (0.5 - \frac{0.2}{2}) \times 0.2}= 24.32 \approx 24 \end{equation} 
+
+
+The channel length of the pass device was chosen as L = 2.5$\mu m$, so the channel width for the pass device was  W = $2.5 \times 24= 60\mu m$. In the simulation, the value of W was increased up to 68$\mu m$.
+
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline 
+      Parameter   & Value  \\\hline
+     Minimum Input Voltage $ V_{in, min}$  & 2V \\\hline
+     Load Current  $ I_{load}$  & $25 \mu$A\\\hline
+      Channel Width W  & 68$\mu m$\\\hline
+      Channel Length L & 2.5$\mu m$ \\\hline
+       
+    \end{tabular}
+    \caption{Parameters for the pass device}
+    \label{table 4.2}
+\end{table}
+
+
+
+
+
+
+
+
+\section{Feedback Network}
+
+The task of the feedback network is to provide the voltage to the positive input terminal of the error amplifier which would be close to the reference voltage, in this case, 1.2 volt. The feedback network consists of 2 or more resistors operating as a voltage divider. An important issue is the current flowing through them, which has to be minimized to decrease power consumption. The following equations show the voltage divider transfer function and the current flowing through them
+
+\begin{equation}
+\label{4.88}
+    \frac{V_{out}}{V_{Ref}} = \frac{R_{f1}+R_{f2}}{R_{f2}}\end{equation}
+\begin{equation}
+\label{4.99}
+    I_{req} = \frac{V_{out}}{R_{f1}+R_{f2}}
+\end{equation}
+
+Where $V_{out}$ is the LDO regulator output voltage, $V_{Ref}$ is the reference voltage, $R_{f1}$ and  $R_{f2}$ are feedback resistors and $I_{req}$ is the current flowing through them. The current flowing through the feedback brunch was chosen to be very low, approximately $0.052\%$ of the maximum load current ($I_{load}$ = 25µA) to be 13nA. Solving equation \ref{4.88} and \ref{4.99} gives
+
+\begin{equation}
+    R_{f2} = \frac{V_{Ref}}{I_{req}} = \frac{1.2}{13n} = 92.3M\Omega
+\end{equation}   
+\begin{equation}
+    R_{f1} = \frac{V_{out}}{I_{req}} -R_{f2} = \frac{1.8}{13n} -92.3M = 46.15M\Omega 
+\end{equation}
+
+However, using resistors as the voltage divider is not the best possible approach because the resistors are made of high resistivity polysilicon. It consumes a large area and matching between the resistors is important in the fabrication process. A better approach would be using diode-connected PMOS transistors as the voltage divider. The transistors used here are 1.98V PE transistors and they operate in the sub-threshold region as the gate-source voltage is lesser than the threshold voltage. The voltage divider should divide the voltage in the ratio of the feedback resistors, in that case, $R_{f2} / R_{f1} = 2:1$. So three diode-connected PMOS transistors are used and the feedback voltage is provided from the drain potential of the first transistor. Each transistor needs to have the voltage drop of $V_{SD} = 600mV= V_{SG}$ and the current flowing through them is $I_{req}$ = 13n. Replacing the known parameters into MOS quadratic equation, the W/L ratio was found to be 5.66. After simulation, the ratio was adjusted to 0.9 making the channel length 2.22$\mu m$ and the channel width as 2$\mu m$
+
+
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline 
+      Parameter   & Value  \\\hline
+     Output Voltage $ V_{out}$  & 1.8V \\\hline
+     Reference Voltage  $ V_{Ref}$  & 1.2V\\\hline
+     Bias Current $ I_{req}$ & 13nA  \\\hline
+      Channel Width W  & 2$\mu m$  \\\hline
+      Channel Length L & 2.22$\mu m$\\\hline
+       
+    \end{tabular}
+    \caption{Parameters for the Feedback Network}
+    \label{table 4.3}
+\end{table}
+
+
+\section{Error Amplifier}
+
+
+One of the most important blocks of the LDO regulator is the error amplifier. Its task is to provide a constant and stable output proportional to the amplifier’s gain and the voltage difference between a voltage used as a reference voltage and voltage from the feedback network. The output voltage of an ideal error amplifier can be given by \cite{allen2011cmos}
+\begin{equation}
+    V_{out} = A_v (V^+ - V^-)
+\end{equation}
+
+In general, an operational amplifier is used as an error amplifier of the LDO such as a basic differential pair \cite{tantawy2004performance}, a two-stage amplifier \cite{chava2004frequency}, a folded cascade amplifier \cite{crepaldi2011low}, a symmetric OTA (operational transconductance amplifier)  \cite{milliken2007full}, class-AB amplifiers \cite{giustolisi2012robust}. Normally single-stage amplifiers have very little gain and a higher gain is better for line and load regulation of the LDO. Therefore a 2 stage operational amplifier is used for this LDO regulator design. 
+
+\subsection{Error Amplifier specification} 
+
+The first thing before designing an error amplifier is to define the specifications. From the Energy management Unit of the electronic osteosynthesis implant, the specifications for the whole LDO regulator were defined. The clock frequency used in the energy management unit is 30Hz \cite{AutorderArbeit.}. The Settling time of the LDO regulator is assumed to be 10 times the clock frequency, so $30Hz \times 10 = 3000 Hz$ or 333.33${\mu}$s. The Unity Gain Frequency(UGF) is approximately a reciprocal of the settling time as so was calculated as 1/333.33${\mu}$s = 3.00003KHz \cite{.}. The Gain Bandwidth product of the LDO was thus calculated as $2 \times pi \times UGF $ = 18.85KHz. The slew rate is assumed to be roughly ten times faster than the settling time specification, assuming the output slews one-half of the supply rail \cite{allen2011cmos}. Therefore, the value of the slew rate was calculated as 0.015V/${\mu}$s. The open-loop gain of the 2-stage operational amplifier was assumed to be $\geq$ 60dB. To avoid overshoot, the phase margin was defined to be 90$^\circ$ \cite{allen2011cmos}. The relation between the load capacitor $C_L$ and the compensation capacitor $C_c$ is carried out by the following equation of a two-pole system \cite{allen2011cmos}
+
+\begin{equation}
+\label{eq 4.13}
+     PM = 180^\circ- arc tan(\frac{\omega_u}{\omega_{p1}})- arc tan(\frac{\omega_u}{\omega_{p2}})- arc tan(\frac{\omega_u}{\omega_{z1}}) \end{equation}
+     
+Where $\omega_{p1}$, $\omega_{p2}$, and $\omega_{z}$ are the locations of the dominant pole, the first non-dominant pole, and the zero respectively. With $(\frac{\omega_u}{\omega_{p1}})$ is the open-loop DC gain, PM is the phase margin. Since a 90$^{\circ}$ phase margin makes the step response of an operation amplifier behave like a first-order response, similar to that of an RC circuit \cite{baker2019cmos}, the system with a 90$^\circ$ phase margin would ideally have only one pole. If $\omega_{z}$ is assumed to be located 10 times the unity gain frequency $\omega_{u}$, the relation between $C_c$ and $C_L$ was found to be $C_c$ $\geq 1.25 \times$ $C_L$. In the full LDO regulator design, the capacitance at the output node of the error amplifier will be dominated by the gate capacitance of the pass device. From the simulation, to have a 90$\^{circ}$ phase margin for both the minimum and maximum input voltages of the LDO regulator, the compensation capacitor's value was chosen as 20$pF$.
+
+\hfill
+
+Defining the value of the input common-mode range was another important specification of the design for which the topology of the 2 stage opamp needed to be changed. The common-mode voltage of the 2-stage opamp needs to be 1.2V or close to 1.2 V as we know from the common-mode equation 
+
+
+\begin{equation}
+    V_{CM}= \frac{V_{ref} + V_{fb}}{2}   = \frac{1.2 + 1.2}{2} = 1.2
+\end{equation}
+
+This point will be discussed more while describing the choice of the topology in the following section. 
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline 
+      Parameter   & Value  \\\hline
+     Open Loop DC Gain  & 60dB \\\hline
+     Phase Margin    & 90$^\circ$\\\hline
+     Settling Time (calculated for the whole system)  &  333.33${\mu}$s\\\hline
+     Unity Gain Frequency (calculated for the whole system)   &  3.00003KHz\\\hline
+     Slew Rate (calculated for the whole system) &  0.015V/${\mu}$s\\\hline
+     Compensation Capacitance $C_c$   & 20$pF$\\\hline
+    \end{tabular}
+    \caption{Error Amplifier Specifications}
+    \label{table 4.4}
+\end{table}
+
+
+
+
+
+
+
+
+
+\subsection{Choosing the Input Stage}
+
+At first, an NMOS input pair 2 stage opamp was chosen. While deriving the aspect ratios of the transistors in the opamp, it was found out the values were very low for all the transistors and at a point practically impossible. For this reason, the W/L ratios of the first-stage transistors were assumed to be 1. The biasing current was chosen to be 1${\mu}$A. However with $V_{CM}$ =1.2, the $V_{DS,5}$ was  was coming out to be negative. From figure \ref{fig4.6} \cite{InstituteforIntegratedCircuits.} we can say
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=345pt]{Images/NMOS Input Stage Opamp.png}
+    \caption{2 Stage Opamp with NMOS Input Stage }
+    \label{fig4.6}
+\end{figure}
+
+\begin{equation}
+    V_{DS,5} = V_{in,min} - V_{SS} -  \sqrt{\frac{I_5}{\beta_1}} - V_{TH1,max}
+   \end{equation}
+\begin{equation}
+    V_{DS,5} = V_{in,min} - \sqrt{\frac{I_5}{\mu_n C_{ox,n}(W/L)_1}} - V_{TH1,max}
+   \end{equation}
+\begin{equation}
+     V_{DS,5}= 1.2-\sqrt{  \frac{1\mu}{46.8\mu \times 1}} - 1.33 = -0.27
+\end{equation}
+
+To avoid this, the topology was changed to PMOS differential pair. The location of poles and zeros remain the same and so the $C_L$ and $C_c$ values remain as before \cite{gray1982mos}. The W/L ratios of the input stage transistors were chosen as 1. The W/L of the current mirror stage was calculated from the minimum common-mode equation which is 
+
+\begin{equation}
+    V_{CM,min} = V_{SS} - |V_{TH,1}| + V_{TH,3} + V_{dsat,3}
+\end{equation}
+\begin{equation}
+    V_{CM,min} = V_{SS} - |V_{TH,1}| + V_{TH,3} + \sqrt{\frac{I_5}{\mu_n C_{ox,n}(W/L)_3}}
+\end{equation}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=300pt]{Images/PMOS Input Stage Opamp.png}
+    \caption{2 Stage Opamp with PMOS Input Stage }
+    \label{fig4.7}
+\end{figure}
+
+If $(W/L)_3$ = 1 then the minimum common-mode voltage is 176mV. The aspect ratio of M5 was calculated from the maximum common-mode voltage equation which is 
+
+\begin{equation}
+    V_{CM,max} = V_{DD} - V_{dsat,5} - V_{gs,1}
+\end{equation}
+\begin{equation}
+    V_{CM,max} = V_{DD}  - \sqrt{\frac{2 \times I_5}{\mu_p C_{ox,p}(W/L)_5}} - \sqrt{\frac{I_5}{\mu_p C_{ox,p}(W/L)_1}} - |V_{TH,1}|  
+\end{equation}
+
+
+If the supply voltage is 4V, then the $V_{CM,max}$ voltage is 2.34V with (W/L) = 1. The aspect ratio of M7 and M6 were calculated as 5.26 and 13.15 respectively with 2.63$\mu$A current flowing through them. However, because the supercapacitor bank minimum voltage is 2 V \cite{AutorderArbeit.}, the error amplifier needs to be functioning with the minimum input voltage. The minimum $V_{DD}$ required by this topology to keep all the transistors in saturation is  
+
+\begin{equation}
+    V_{DD} = V_{CM,max} + |V_{TH,1}| - \sqrt{\frac{I_5}{\mu_p C_{ox,p}(W/L)_1}} - \sqrt{\frac{2 \times I_5}{\mu_p C_{ox,p}(W/L)_5}} 
+\end{equation}
+
+As the common-mode voltage at least needs to be 1.2V and $V_{TH,1}$ is also close to 1.2V, $V_{DD}$ can never be 2V Which is the minimum supply voltage of the desired LDO. Finally, it was decided that an NMOS input pair 2 stage opamp with keeping the input stages in the sub-threshold region will be used. In this way, a voltage of 1.2V can be supplied on the positive and negative input terminals of the opamp and with a biasing current of 1$\mu A$, the threshold voltages of the input stage transistors are above the input common-mode voltage. The W/L ratios of the input stages transistors were calculated by the drain current equation for sub-threshold region
+
+\begin{equation}
+    I_{sub} = \mu \frac{W}{L} \sqrt{\frac{q \epsilon_{si} N_a}{2 \phi_s }} {(\frac{K_B T}{q})}^2 e^{\frac{q(V_{gs}-V_t)}{mkT}} (1- e^{\frac{-qV_{ds}}{kT}})
+\end{equation}
+
+where q is the electrical charge, m is the sub-threshold swing coefficient,
+$k_{B}$ is the Boltzmann constant, $\mu$ is the mobility, $\phi_s $ is the surface potential, $V_t$ is the thermal voltage, $N_a$ is the channel doping concentration, $\epsilon_{si}$ is the gate dielectric constant of  silicon and T is the room temperature. 
+
+\hfill
+
+In the simulation, the (W/L) values of the input stage transistors were used as 200. The W/L ratio of the current mirror stage was chosen as 1 and for M5, it was chosen as 8. From the simulation, to keep M6 and M7 in saturation, their aspect ratios were chosen as 2.5 and 1 respectively. The current through the output branch was 993nA and the resistance $R_z$ was 1/gm6 = 1/6.671u $\approx$ 150$K\Omega$. The open-loop gain from the AC simulation was found to be 61.5dB and the phase margin was 88.7 degrees for an input voltage of 2V. The gain and phase margin for the maximum input voltage of 5V for this LDO regulator design was found to be 68.9dB and 89 degrees. The Schematic of the design is shown in Appendix \ref{Ap A} and the frequency response is shown in Figures \ref{Err frq1} and \ref{Err frq2}.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+    \hline 
+      Parameter   & Width(W)(m) & Length(L)(m) & Operating Region  \\\hline
+     $M_{1,2}$  & 200$\mu$ & 1$\mu$ & Sub-threshold \\\hline
+     $M_{3,4}$  & 2.5$\mu$ & 2.5$\mu$ & Saturation\\\hline
+     $M_{5}$  & 8$\mu$ & 1$\mu$ & Saturation\\\hline
+     $M_{6}$   & 2.5$\mu$ & 1$\mu$ & Saturation\\\hline
+     $M_{7}$ & 8$\mu$ & 1$\mu$ & Saturation\\\hline
+     $M_{8}$   & 8$\mu$ & 1$\mu$ & Saturation\\\hline
+      \end{tabular}
+    \caption{Error Amplifier Transistor Sizes}
+    \label{table 4.5}
+\end{table}
+
+
+\begin{figure}[!htbp]
+  \centering
+  \subfloat[]{\includegraphics[width=0.8\textwidth]{Images/Error amplifier gain and PM for VDD=2V.PNG}\label{Err frq1}}
+  \hfill
+  \subfloat[]{\includegraphics[width=0.8\textwidth]{Images/Error amplifier gain and PM for VDD=5V.PNG}\label{Err frq2}}
+  \caption{Error amplifier frequency response at (a) $V_{in}$ $=2V$ (b) $V_{in}$ $=5V$}
+\end{figure}
+\FloatBarrier
+
+\section{Frequency Compensation calculation}
+
+As it was discussed in chapter \ref{freq_comp}, frequency compensation is a major parameter in defining the LDO regulator stability. The compensation approach selected for this design was internal compensation as shown in Figure \ref{fig3.6}. In this section, the value of the compensation capacitor $C_c$ and the zero nulling resistor $R_z$ is calculated. 
+
+\hfill
+
+To determine $C_c$, first, the desired phase margin of the LDO regulator has to be defined. Figure \ref{fig4.8} from \cite{allen2011cmos} shows the time response of second-order closed-loop system with various phase margins. It is observed that a larger phase margin results in less ringing of the output signal. It is important to have an adequate phase margin to keep the undesirable ringing to an acceptable level. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=300pt]{Images/phase margin allen.PNG}
+    \caption{Response of a second-order system with various phase margins }
+    \label{fig4.8}
+\end{figure}
+
+
+Moreover, the error amplifier was designed to have a phase margin of $90^\circ$. A $90^\circ$ phase margin makes the step response of an operational amplifier behave like a first-order response, similar to that of an RC circuit \cite{baker2019cmos}. So in the whole LDO regulator, there are two poles, one at the error amplifier output node and the other at the LDO regulator output node. To avoid ringing or to keep it at an acceptable level, the phase margin was decided to be $75^\circ$. Using equation \ref{eq 4.13} and substituting the values (assuming that the right half-plane zero is placed at or beyond ten times the gain-bandwidth), the relation between the compensation capacitor $C_c$ and the load capacitor $C_{L}$ can be determined
+
+\begin{equation}
+ PM = 180^\circ- arc tan(\frac{\omega_u}{\omega_{p1}})- arc tan(\frac{\omega_u}{\omega_{p2}})- arc tan(\frac{\omega_u}{\omega_{z1}})
+\end{equation}
+
+Where $\omega_u$ is the unity gain frequency, $\omega_{p1}$ defines the location of the dominant pole which is the error amplifier output pole, $\omega_{p2}$ defines the location of the non-dominant pole which is the pole at the output node of the LDO regulator,  $(\frac{\omega_u}{\omega_{p1}})$ is the open-loop DC gain of 60dB, phase margin $PM = 75^\circ$, $ \omega_{z1}$ is located at least 10 times the unity gain frequency $\omega_u$ ,
+
+\begin{equation}
+ arc tan(\frac{\omega_u}{\omega_{p2}})= 180^\circ- PM - arc tan(\frac{\omega_u}{\omega_{p1}})- - arc tan(\frac{\omega_u}{\omega_{z1}})
+\end{equation}
+ 
+\begin{equation}
+ arc tan(\frac{\omega_u}{\omega_{p2}})= 180^\circ- 75^\circ - arc tan(60)- arc tan(0.1) = 10.244
+\end{equation}
+
+\begin{equation}
+    (\frac{\omega_u}{\omega_{p2}}) = tan(10.244)= 0.18
+\end{equation}
+ 
+\begin{equation}
+\label{eq4.28}
+    \omega_u = 0.18 \times \omega_{p2}
+\end{equation}
+
+ Since the zero is located 10 times the unity gain frequency
+ 
+ \begin{equation}
+     \omega_z = 10 \times \omega_{u} \Longrightarrow \frac{gm_{PT}}{C_c} =10\times \frac{gm_{in}}{C_c} \Longrightarrow  gm_{PT} = 10 \times gm_{in}
+ \end{equation}
+  
+Where $gm_{in}$ and $gm_{PT}$ are the input stage and the output stage (in this design the pass transistor is the output stage transistor) transconductance respectively.  
+ 
+From \ref{eq4.28}
+\begin{equation}
+\omega_u = 0.18 \times \omega_{p2} \Longrightarrow \frac{gm_{in}}{C_c}= 0.18\times \frac{gm_{PT}}{C_L}
+ \end{equation}
+ 
+ \begin{equation}
+     \frac{gm_{in}}{C_c}= 0.18\times \frac{10\times gm_{in}}{C_L}
+ \end{equation}
+ 
+ \begin{equation}
+     \frac{C_L}{C_c} =1.8 \Longrightarrow C_L = 1.8\times C_C
+ \end{equation}
+\begin{equation}
+    C_c \geq 0.55\times C_L
+\end{equation}
+\hfill
+
+Finally, in the simulation, the values of $C_{L}$ and $C_c$ were used as 1pF and 500fF respectively. The $C_c$ value of 100fF resulted in better a phase margin for the maximum supply voltage of 5V and the line transient response improved as well. The value of compensation resistor $R_z$ using equation \ref{eq3.10} has to be set in a way to move the zero to the left half of the s-plane. It's value could be simply set as $1/gm_{PT}$ = $1/70.65\mu$ = 14.15K$\Omega$. 
+
+\hfill
+
+Table \ref{table 4.6} summarizes the parameters for the frequency compensation. 
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline 
+      Parameter   & Value  \\\hline
+     Compensation Capacitor  $ C_c$  & $100fF$ \\\hline
+     Load Capacitor  $ C_L$   & $1pF$\\\hline
+     Zero-nulling resistor $R_z$  & 14.15K$ \Omega$\\\hline
+      
+       
+    \end{tabular}
+    \caption{Parameters for frequency compensation}
+    \label{table 4.6}
+\end{table}
+
+
+\chapter{LDO Regulator Simulation Results}
+
+In this section, the whole LDO regulator will be tested and the performance of the regulator will be evaluated. 
+
+\section{Input-output voltage characteristics}
+
+The input-output characteristic of the whole LDO regulator was obtained by a DC sweep of the Input voltage from 2V to 5V. The maximum load current $I_{load} = 25\mu A$ was used to verify the dropout voltage value.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=300pt]{Images/DC response.PNG}
+    \caption{Input-output characteristics}
+    \label{fig4.1}
+\end{figure}
+
+It can be observed that the output voltage remains regulated at 1.8V for an input voltage in the range of 1.934V to 5V. The dropout voltage value obtained from the simulation was $135mV$. The Dropout voltage is one of the main parameters in defining the LDO regulator efficiency. Figure \ref{fig4.1} shows how the regulator ceases to regulate when the input voltage falls below 1.93429V.
+
+\section{AC Analysis}
+
+The open-loop gain and the phase margin were achieved through an AC simulation. As we know from Chapter \ref{freq_comp} section \ref{feedback}, the closed-loop gain is given by the feedback factor $ \beta_{FB} $ if the open-loop gain is high enough. Therefore, the higher the open-loop gain, the better the regulatory capacity of the LDO regulator will be. Moreover, the unity gain frequency is another important parameter that defines how fast the circuit reacts to changes at the output or input.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=400pt]{Images/AC sim schematic.PNG}
+    \caption{AC Simulation Schematic}
+    \label{figAc}
+\end{figure}
+
+
+Figure \ref{figAc} \cite{.} was used as the test bench for the AC simulation. Some extra components such as the AC voltage supply, a capacitor, and an inductor are needed to analyze the open-loop gain and the phase margin. The capacitor serves as DC-decoupling between the $V_{INP}$ node and the AC voltage supply and the inductor serves as a DC coupling and AC-decoupling between the $V_{INP}$ and $V_{fb}$ node. Figures \ref{fig 5.2_a} and \ref{fig 5.2_b} show the LDO regulator frequency response at an input voltage of (a) 2V and (b) 5V for $25\mu A$ load current.  
+
+\begin{figure}[!htbp]
+  \centering
+  \subfloat[]{\includegraphics[width=0.8\textwidth]{Images/freq 2v iload 25u.PNG}\label{fig 5.2_a}}
+  \hfill
+  \subfloat[]{\includegraphics[width=0.8\textwidth]{Images/freq 5v iload 25u.PNG}\label{fig 5.2_b}}
+  \caption{LDO regulator frequency response at (a) $V_{in}$ $=2V$ (b) $V_{in}$ $=5V$ for $I_{load} =25\mu A$}
+\end{figure}
+\FloatBarrier
+Figure \ref{fig 5.3_a} and \ref{fig 5.3_b} shows the LDO regulator frequency response at an input voltage of (a) 2V and (b) 5V for $6.7\mu A$ load current
+
+\begin{figure}[H]
+  \centering
+  \subfloat[]{\includegraphics[width=0.8\textwidth]{Images/freq 2v iload 6.7u.PNG}\label{fig 5.3_a}}
+  \hfill
+  \subfloat[]{\includegraphics[width=0.8\textwidth]{Images/freq 5v iload 6.7u.PNG}\label{fig 5.3_b}}
+  \caption{LDO regulator frequency response at (a) $V_{in}$ $=2V$ (b) $V_{in}$ $=5V$ for $I_{load} =6.7\mu A$}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{| *{6}{c|} }
+    \hline
+    & \multicolumn{2}{c|}{$V_{in}=2V$}
+            & \multicolumn{2}{c|}{$V_{in}=5V$} \\
+    \hline
+Parameter   &  $I_{load}= 6.7\mu A$  &  $I_{load}= 25\mu A$  &   $I_{load}= 6.7\mu A$  &   $I_{load}= 25\mu A$  \\
+    \hline
+DC gain $A_{DC}(dB)$   &   78.2  &   56.4  &   91.2  &   86.4   \\
+    \hline
+Bandwidth BW $(Hz)$   &    19   &    31   &   12    &   10     \\
+    \hline
+Unity gain frequency UGF $(kHz)$   &   271.1    &   37    &   388.8    & 322.129        \\
+    \hline
+Phase margin PM $(Degrees)$   &  52     &   87.8    &    29   &   59.4     \\
+    \hline
+   
+\end{tabular}
+    \caption{Important parameters from the AC simulation}
+    \label{table 5.1}
+\end{table}
+
+We can observe the frequency responses for maximum and minimum input voltages from Table \ref{table 5.1}. We can see that the open-loop gain, as well as the unity gain frequency, is reduced at the maximum load currents for both the minimum and maximum input voltage of the LDO regulator. For $V_{in} =2V$ the gain reduces from 78.2dB to 56.4dB for an increase of load current from 6.7$\mu A$ to 25$\mu A$. For $V_{in} =5V$, the open-loop DC gain at 6.7$\mu A$ load current is 91.2dB and for a load current of 25$\mu A$, the gain reduces to 86.4dB. This is because the load current affects the gain-bandwidth of the error amplifier feedback loop \cite{.online}. At lower load currents, the output impedance of the pass transistor is high. The LDO regulator output behaves like an ideal current source due to the negative feedback of the control loop. The pole formed by the pass element and the output capacitor occurs at a relatively lower frequency. Whereas, for higher load currents, the LDO regulator output behaves less like an ideal current source. The output impedance of the pass transistor decreases which lowers the gain of the output stage, so as the unity gain frequency. 
+
+\hfill
+
+The phase margin increases for higher load currents for both the minimum and the maximum input voltages of the LDO regulator. For $V_{in} =2V$, the phase margin at the minimum load current of 6.7$\mu A$ is 52$^{\circ}$ and for the maximum load current of 25$\mu A$ defined by the specifications of the LDO regulator, the phase margin is 87.8$^{\circ}$. For the maximum input voltage of 5$V$, the phase margin at the minimum load current is 29$^{\circ}$ and for 25$\mu A$, the phase margin is 59.4$^{\circ}$. We can see the phase margin for the minimum load current at $V_{in} =5V$ is 29$^{\circ}$, a lower phase margin may result in a larger overshoot. However, as a stable loop needs a minimum of 20$^{\circ}$ phase margin \cite{.user}, a 29$^{\circ}$ phase margin for the minimum load current at the maximum input voltage would not disrupt the operation of the LDO regulator, as will be seen in the transient simulation. 
+
+
+\subsection{Power Supply Rejection}
+
+Power Supply Rejection (PSR) defines the regulator's ability to prevent fluctuation of the output voltage due to the changes in the input supply voltage. PSR can be described by the following equation
+
+\begin{equation}
+PSR=  \frac{V_{out}}{V_{in}}
+\end{equation}
+
+Figures \ref{PSR2} and \ref{PSR5} exhibit the PSR behavior of the designed LDO regulator at $(a) V_{in}= 2V$ and $(b) V_{in}= 5V$.
+
+\begin{figure}[H]
+  \centering
+  \subfloat[]{\includegraphics[width=0.8\textwidth]{Images/PSR=2V.PNG}\label{PSR2}}
+  \hfill
+  \subfloat[]{\includegraphics[width=0.8\textwidth]{Images/PSR=5V.PNG}\label{PSR5}}
+  \caption{LDO regulator Power Supply Rejection at (a) $V_{in}$ $=2V$ (b) $V_{in}$ $=5V$}
+\end{figure}
+
+It can be observed that the LDO regulator demonstrates a PSR value of -29.19dB at 1$kHz$ for $V_{in}=2V$ for a regulated output voltage of 1.8V. The PSR value increases up to -75.637dB at 1$kHz$ for the LDO regulator's maximum input voltage of 5V. 
+
+
+
+\section{Transient Analysis}
+
+Although the open-loop AC and DC response of the system gave satisfying results, they are mostly helpful approximations of the behavior of the circuit. To test how the circuit behaves in real-time with varying signals, a transient simulation is necessary. Two key parameters of the LDO regulator in the transient domain are line and load transient responses. Line transient response is measured as how the LDO regulator output voltage settles with a varying input voltage whereas the load transient response is analyzed as the settling behavior of the output with varying load current.
+
+\subsection{Line Transient}
+
+An important parameter while setting up the line transient simulation was to measure the input signal rise time and fall time. As we know, the input signal of this LDO regulator is the output signal coming out of the supercapacitor bank of the energy management unit. So the fastest possible charging rate of the supercapacitor voltage will be the worst-case rise time of the LDO regulator input signal and the fastest possible discharge rate will be the worst case fall time of the input signal. 
+
+\hfill
+
+To calculate the rise time, an ideal 44mF capacitor in series with a $40\Omega $ resistor was used as a representation for the supercapacitor bank. We know the capacitor charging equation
+
+\begin{equation}
+    V(t)= V_0(t)[1-e^\frac{-t}{\tau}]
+\end{equation}
+
+where $V_0$ is the final voltage of 3.3V and V is the initial voltage of 2V. Substituting all the values, the time it takes to rise from voltage 2V to 3.3V is t= 1.64s. The voltage change over time was estimated by taking the time derivative of the capacitor charging equation 
+\begin{equation}
+    \frac{dV}{dt} = \frac{V_0}{\tau} e^\frac{-t}{\tau}
+\end{equation}
+
+Thus, The rate of change of the charging voltage over time was found to be 739.7mV/s. As we know, the rate of change of voltage over time is known as the slew rate SR and as the input voltage of the LDO regulator will rise from 2V to 5V, the worst-case rise time can be calculated as
+
+\begin{equation}
+    t_r = \frac{\Delta V}{SR}  = \frac{3V}{739.7mV/s} \approx 4s
+\end{equation}
+
+So the worst case rise time of the input of this LDO regulator is 4 seconds. 
+
+\hfill
+
+The worst-case fall time of the input signal was calculated in a similar way. In the worst-case scenario, the fastest discharging of the supercapacitor bank was possible when all the capacitors were in series connection. So, the time constant of discharging was calculated by using an equivalent capacitance of 2.75mF and a minimum load resistance of $3.6k\Omega$ \cite{AutorderArbeit.}. From the equations presented in \cite{AutorderArbeit.}, the voltage change over time for discharging was calculated as -171.58mV/s and the worst-case fall time of the input signal was thus calculated to be approximately 17seconds. 
+
+To set up the transient simulation, a pulse signal was used with a rise time and fall time of $300\mu$ seconds. Figures \ref{trln1} and \ref{trln2} show the result of the line transient simulation for the load current of $(a)= $6.7 $\mu A$ and $(b)=$ 25 $\mu A$.
+
+\begin{figure}[H]
+  \centering
+  \subfloat[]{\includegraphics[width=0.8\textwidth]{Images/tran line 6.7u.PNG}\label{trln1}}
+  \hfill
+  \subfloat[]{\includegraphics[width=0.8\textwidth]{Images/tran line 25u.PNG}\label{trln2}}
+  \caption{LDO regulator line transient response at (a) $I_{load}$ $= 6.7\mu A$ (b) $I_{load}$ $=25\mu A$}
+\end{figure}
+
+It can be observed that for the minimum load current of the LDO regulator, the output signal has an initial overshoot of 3.5$mV$ before settling into a stable regulated output voltage. The settling time in this case is roughly 30$\mu$ seconds. For the maximum load current $(25\mu A)$ of the LDO regulator, the output has an initial overshoot of 30$mV$ before settling into the regulated output voltage. The settling time in this case as well exhibits a value of approximately 30 $\mu$ seconds.
+
+\subsection{Load Transient}
+
+Load transient response is also another important parameter that shows the settling behavior of the output voltage for a varying load current. A pulse generator signal was used for varying the load current from $6.7\mu A$ to $25\mu A$ with the input signal rise and fall time as 100$\mu$ seconds. 
+
+\begin{figure}[H]
+  \centering
+  \subfloat[]{\includegraphics[width=0.6\textwidth]{Images/load tr VDD=2V.PNG}\label{fig 5.3_a}}
+  \hfill
+  \subfloat[]{\includegraphics[width=0.6\textwidth]{Images/load tr VDD=5V.PNG}\label{fig 5.3_b}}
+  \caption{Load transient response at (a) $V_{in}$ $=2V$ (b) $V_{in}$ $=5V$ for $I_{load} =6.7\mu A$ to $25\mu A$ }
+\end{figure}
+
+It can be observed that the output signal for $V_{in}$ =2V has a maximum overshoot of 40mV and a maximum undershoot of approximately 150mV. The signal settles down within the rise time of the input signal. Similarly, for $V_{in}$ =5V, maximum overshoot and undershoot are roughly 30mV and 50mV respectively. The output signal in this case also settles into a regulated voltage within the rise and fall time of the input signal. 
+
+
+\section{Transient behavior under process variation}
+
+Another important parameter for the characterization of the LDO regulator performance is verifying it under process variations. The process corners typical (normal NMOS and normal PMOS), worst power WP (fast NMOS and fast PMOS), and worst speed WS (slow NMOS and slow PMOS) were taken as simulation parameters to verify the LDO regulator transient performance. The simulations were performed for both $V_{in}$ = 2V and $V_{in}$ = 5V from $I_{Load}$ varying from the minimum load current defined by the energy management unit \cite{AutorderArbeit.} of 6.7$\mu A$ to the maximum load current of 25$\mu A$ and are displayed in Figures \ref{2vtp} to \ref{5vws}.
+
+
+\begin{figure}[H]
+  \centering
+  \subfloat[]{\includegraphics[width=0.5\textwidth]{Images/VDD 2 V tp.PNG}\label{2vtp}}\hfill
+  \subfloat[]{\includegraphics[width=0.5\textwidth]{Images/VDD 2 V wp.PNG}\label{2vwp}}\hfill
+  \subfloat[]{\includegraphics[width=0.5\textwidth]{Images/VDD 2 V ws.PNG}\label{2vws}}\hfill
+  \subfloat[]{\includegraphics[width=0.5\textwidth]{Images/VDD 5 V tp.PNG}\label{5vtp}}\hfill
+  \subfloat[]{\includegraphics[width=0.5\textwidth]{Images/VDD 5 V wp.PNG}\label{5vwp}}\hfill
+  \subfloat[]{\includegraphics[width=0.5\textwidth]{Images/VDD 5 V ws.PNG}\label{5vws}}
+  
+  \caption{LDO regulator performance at $V_{in}$ $=2V$, (a) Typical corner (b) Worst power corner (c)  Worst speed cornet, $V_{in}$ $=5V$, (d) Typical corner (e) Worst power corner (f) Worst speed corner for $I_{load} =6.7\mu A$ to $25\mu A$ }
+\end{figure}
+
+The results show that the LDO regulator transient performance doesn't seem to be affected by the process variations. The only case of concern could be the worst speed WS (slow NMOS and slow PMOS) corner which exhibits the largest undershoot, overshoot, and ringing from low to high current transitions. 
+
+
+
+\section{Transient behavior under temperature variation}
+
+The LDO regulator performance was also tested under varying temperatures. Temperatures of -40$^{\circ}C$, 0$^{\circ}C$, 60$^{\circ}C$ and 120$^{\circ}C$ were taken into consideration. The simulations were performed for both $V_{in}$ = 2V and $V_{in}$ = 5V from $I_{Load}$ varying from 6.7$\mu A$ to 25$\mu A$ and are displayed in Figures \ref{temp2} and \ref{temp5}.
+
+\begin{figure}[H]
+  \centering
+  \subfloat[]{\includegraphics[width=0.8\textwidth]{Images/temp Vdd=2.PNG}\label{temp2}}
+  \hfill
+  \subfloat[]{\includegraphics[width=0.8\textwidth]{Images/temp Vdd=5.PNG}\label{temp5}}
+  \caption{Load transient response for temperatures -40$^{\circ}C$ to 120$^{\circ}C$ (a) $V_{in}$ $=2V$ (b) $V_{in}$ $=5V$ for $I_{load} =6.7\mu A$ to $25\mu A$ }
+\end{figure}
+
+It can be observed that the LDO regulator performance does not seem to be affected by different temperatures at varying load current conditions. 
+
+\section{Line and Load Regulation}
+Figure \ref{linereg} illustrates line regulation. It is defined as the output voltage change in response to a change in the input voltage at a fixed load current. It is commonly tested under maximum load current. in this case, 25$\mu A$. As we know
+\begin{equation}
+\label{LNR}
+    LNR= \frac{\Delta V_{out}}{\Delta V_{in}}
+\end{equation}
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=330pt]{Images/Line Regulation.PNG}
+    \caption{LDO regulator line regulation} 
+    \label{linereg}
+\end{figure}
+
+Solving equation \ref{LNR} gives the line regulation value as 0.32$mV/V$ for $V_{out}$ = 1.8V and a constant load current of 25$\mu A$.
+
+\hfill
+
+Load regulation is defined as the rate of change of the output voltage in response to a change in the load current, at a constant input voltage. 
+\begin{equation}
+    LDR= \frac{\Delta V_{out}}{\Delta I_{load}}
+\end{equation}
+
+\begin{figure}[!htb]
+  \centering
+  \subfloat[]{\includegraphics[width=0.6\textwidth]{Images/load regulation vin=2.PNG}\label{LDR2}}
+  \hfill
+  \subfloat[]{\includegraphics[width=0.6\textwidth]{Images/load regulation vin=5.PNG}\label{LDR5}}
+  \caption{LDO regulator load regulation at (a) $V_{in}$ $=2V$ (b) $V_{in}$ $=5V$ for $I_{load} =0$ to $25\mu A$ }
+\end{figure}
+
+Figure \ref{LDR2} and \ref{LDR5} represents load regulation for $V_{in}$ = 2V and $V_{in}$= 5V. The load current is varied from 0 to the maximum load current of $25\mu A$. Solving the load regulation equation with values from the curves gives a load regulation value of 0.04$mV/\mu A$ for $V_{in}$ = 2V and 0.01$mV/\mu A$ for $V_{in}$ = 5V.
+
+
+
+
+
+\section{Efficiency}
+
+As discussed in Chapter \ref{ch2}, efficiency is an important parameter in the LDO regulator characterization. As we know the equation of current efficiency, 
+                                     \begin{equation}\eta_{I}=  \frac{I_{load}}{I_{IN}}  =\frac{I_{load}}{I_{load}+I_{Q}}\end{equation}
+                                     
+The current consumption of each block of the LDO regulator can be observed in Table \ref{table Iq}. 
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+      Parameter   & Error Amplifier & Feedback Network & Total Consumption  \\\hline
+      $ I_{Q}$  & 1.8287$\mu A$ & 13$n A$ & 1.84$\mu A$  \\\hline
+      \end{tabular}
+    \caption{LDO Regulator total current consumption}
+    \label{table Iq}
+\end{table}
+
+Replacing $I_{load}$ = 25$\mu A$ and $I_{Q}$ = 1.84$\mu A$  , the current efficiency of the designed LDO regulator results in 93.14$\%$.
+
+\hfill
+
+With a lower quiescent current, the LDO regulator efficiency will be maximized. As we know from the efficiency equation
+
+\begin{equation}\eta=  \frac{V_{in}- V_{DO} }{V_{in}} * \eta_{I} = [1- \frac{V_{DO}}{V_{in}} ] \eta_{I} \end{equation} 
+
+substituting the values as $V_{in}$ = 2V and $V_{DO}$ = 136mV results in the LDO regulator efficiency of 87$\%$. 
+
+
+\chapter{Conclusion}
+
+In this project work, a low power low dropout regulator was designed in X-fab 180nm XH018 technology for the energy management unit of an electronically instrumented osteosynthesis implant,  developed at the Institute for Integrated Circuits, TUHH. The LDO regulator has to provide a 1.8V supply voltage for most of the components of the energy management unit. A low power regulator is required because of its continuous operation so the energy management unit doesn't consume more energy than it provides. Several parameters were taken into consideration during the design, but the main design considerations were the input voltage of the LDO, which is the output voltage coming out of the supercapacitor bank of the energy management unit and in the range of 2V to maximum 5V, a regulated output voltage of 1.8V and maximum load current of 25$\mu A$. Firstly, the typical parameters of the LDO regulator and how they're interpreted and measured were discussed. In the LDO Regulator Components Design chapter, all the calculations of the LDO regulator components were thoroughly discussed. A PMOS transistor was chosen as the pass device due to its low dropout voltage feature. A two-stage operational amplifier was chosen as the error amplifier. The amplifier was designed with an NMOS input differential stage keeping the input transistors in sub-threshold and all the other transistors in saturation. The feedback network was composed of diode-connected PMOS transistors with a voltage divider ratio of 2:1. The LDO regulator was tested in the Cadence design environment. The simulation results showed a constant 1.8V output voltage over a 2V to 5V input voltage range. The dropout voltage of the LDO regulator was 136mV. The efficiency of the LDO regulator was calculated as 87$\%$. 
+
+\hfill
+
+There are room for improvement in the LDO regulator. Instead of a constant voltage source, a voltage reference circuit can be used at the negative input terminal of the error amplifier. As it was seen in the AC simulation, the open-loop gain was lesser at maximum load current than the gain resulting in minimum load current for the same input voltage. To rectify this, the common source PMOS transistor at the output stage of the error amplifier could be biased in the triode region. When the load current increases, the source-gate voltage of the pass transistor which is connected at the output of the error amplifier will increase. Thus, the output voltage of the error amplifier will reduce and the common source PMOS transistor at the error amplifier output stage will enter into saturation region. Therefore, the open-loop gain for higher load current would increase. Moreover, if the miller capacitor value for the frequency compensation is too large; a current amplifier could be used as a capacitance multiplier \cite{milliken2007full}. The capacitor would react to changes in the output voltage due to changes in the load current, resulting in generating an equivalent current change flowing through the capacitor. The generated current would then be injected into the gate capacitance of the pass transistor. This approach allows using a small capacitor value and saves chip area. Table \ref{table conc} shows the specification defined by the energy management unit and the final results from the simulation of the designed LDO regulator. 
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+      Parameter   & Specification & Nominal results  \\\hline
+      
+      $ V_{out}$  & 1.8V & 1.8V \\\hline
+      $ V_{DO}$  & < 0.2V & 135mV \\\hline
+      $ I_{Q}$  & - & 1.84$\mu A$ \\\hline
+      Gain(at $ V_{in}= 2V)$  & -  & 56.4dB\\\hline
+      Unity Gain Frequency(at $ V_{in}= 2V)$  & -  & 37kHz\\\hline
+      Phase Margin (at $ V_{in}= 2V$)  & >45$^{\circ}$  & 87.8$ ^{\circ}$\\\hline
+      Efficiency & -  & 87$\%$\\\hline 
+    \end{tabular}
+    \caption{Comparison between specification and final result of the designed LDO regulator}
+    \label{table conc}
+\end{table}
+   
+
